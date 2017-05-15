@@ -1,0 +1,62 @@
+1. Write a query to get monthly salary amount for each department.
+	e.g. 
+		DEPARTMENT_ID	AMOUNT
+		-------		---------------
+		90 		58000
+
+2. Write a query to get number or employees for each job position.
+	e.g. 
+		JOB_ID		NO. OF EMPLOYEE
+		-------		---------------
+		AC_ACCOUNT	1
+
+3. Write a query to find which manager manage the most number of employee.
+
+===============================================================================
+
+1.
+SELECT employees.DEPARTMENT_ID, departments.DEPARTMENT_NAME, SUM(employees.SALARY) AS 'Monthly Total Salary'
+
+FROM employees
+
+JOIN departments ON departments.DEPARTMENT_ID = employees.DEPARTMENT_ID
+
+GROUP BY employees.DEPARTMENT_ID
+
+ORDER BY SUM(employees.SALARY);
+
+2.
+SELECT employees.JOB_ID, jobs.JOB_TITLE, COUNT(employees.EMPLOYEE_ID) AS 'Employee Count'
+
+FROM employees
+
+JOIN jobs ON jobs.JOB_ID = employees.JOB_ID
+
+GROUP BY employees.JOB_ID
+
+ORDER BY COUNT(employees.EMPLOYEE_ID);
+
+3.
+-- From the data, I GUESS manager_id equals employee_id(foreign key), so I can find the manager name from the employee table itself.
+
+SELECT employees.MANAGER_ID, CONCAT(managers.FIRST_NAME, ' ', managers.LAST_NAME) as 'Manager Name', IFNULL(departments.DEPARTMENT_NAME, '-') AS 'Department', COUNT(employees.EMPLOYEE_ID) AS 'Managed Employees'
+
+
+FROM employees
+
+
+JOIN employees managers ON employees.MANAGER_ID = managers.EMPLOYEE_ID
+
+
+LEFT JOIN departments ON departments.MANAGER_ID = employees.MANAGER_ID
+
+
+GROUP BY employees.MANAGER_ID;
+
+
+SELECT employees.MANAGER_ID, CONCAT(managers.FIRST_NAME, ' ', managers.LAST_NAME) as 'Manager Name', IFNULL(departments.DEPARTMENT_NAME, '-') AS 'Department', COUNT(employees.EMPLOYEE_ID) AS 'Managed Employees'
+FROM employees
+JOIN employees managers ON employees.MANAGER_ID = managers.EMPLOYEE_ID
+LEFT JOIN departments ON departments.MANAGER_ID = employees.MANAGER_ID
+GROUP BY employees.MANAGER_ID
+ORDER BY COUNT(employees.EMPLOYEE_ID) DESC LIMIT 1;
